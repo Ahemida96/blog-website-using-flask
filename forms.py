@@ -28,7 +28,6 @@ class LoginForm(FlaskForm):
     submit = SubmitField('Let me in!'.upper())
 
 
-# TODO: Create a CommentForm so users can leave comments below posts
 class CommentForm(FlaskForm):
     comment_text = CKEditorField("Comment", validators=[DataRequired()])
     submit = SubmitField("Submit Comment")
