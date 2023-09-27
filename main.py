@@ -48,8 +48,6 @@ class BlogPost(db.Model):
     img_url = db.Column(db.String(250), nullable=False)
     author_id: Mapped[int] = db.Column(ForeignKey('users.id'))
     author = relationship("User", back_populates="posts")
-    # author: Mapped["User"] = relationship(back_populates="posts")
-    # comments: Mapped[list['Comment']] = relationship(back_populates='blog')
     comments = relationship("Comment", back_populates='blog')
 
 
@@ -59,9 +57,7 @@ class User(db.Model, UserMixin):
     email = db.Column(db.String, unique=True, nullable=False)
     password = db.Column(db.String, nullable=False)
     name = db.Column(db.String(150), nullable=False)
-    posts: Mapped[list[BlogPost]] = relationship(back_populates="author")
-    # posts = relationship("BlogPost", back_populates="author")
-    # comments: Mapped[list['Comment']] = relationship(back_populates='author')
+    posts = relationship("BlogPost", back_populates="author")
     comments = relationship("Comment", back_populates='author')
 
 
@@ -70,9 +66,9 @@ class Comment(db.Model):
     id: Mapped[int] = mapped_column(Integer, primary_key=True)
     text: Mapped[str] = mapped_column(Text, nullable=False)
     author_id: Mapped[int] = mapped_column(Integer, ForeignKey('users.id'))
-    author: Mapped['User'] = relationship(back_populates='comments')
+    author = relationship("User", back_populates='comments')
     blog_id: Mapped[int] = mapped_column(Integer, ForeignKey('blog_posts.id'))
-    blog: Mapped['BlogPost'] = relationship(back_populates='comments')
+    blog = relationship("BlogPost", back_populates='comments')
 
 
 with app.app_context():
