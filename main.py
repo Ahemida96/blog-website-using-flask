@@ -49,7 +49,8 @@ class BlogPost(db.Model):
     author_id: Mapped[int] = db.Column(ForeignKey('users.id'))
     author = relationship("User", back_populates="posts")
     # author: Mapped["User"] = relationship(back_populates="posts")
-    comments: Mapped[list['Comment']] = relationship(back_populates='blog')
+    # comments: Mapped[list['Comment']] = relationship(back_populates='blog')
+    comments = relationship("Comment", back_populates='blog')
 
 
 class User(db.Model, UserMixin):
@@ -60,7 +61,8 @@ class User(db.Model, UserMixin):
     name = db.Column(db.String(150), nullable=False)
     posts: Mapped[list[BlogPost]] = relationship(back_populates="author")
     # posts = relationship("BlogPost", back_populates="author")
-    comments: Mapped[list['Comment']] = relationship(back_populates='author')
+    # comments: Mapped[list['Comment']] = relationship(back_populates='author')
+    comments = relationship("Comment", back_populates='author')
 
 
 class Comment(db.Model):
