@@ -11,9 +11,11 @@ from sqlalchemy import ForeignKey, Integer, Text
 from werkzeug.security import generate_password_hash, check_password_hash
 from sqlalchemy.orm import relationship, Mapped, mapped_column
 from forms import CreatePostForm, RegisterForm, LoginForm, CommentForm
+import secrets
 
+secret_key = secrets.token_hex(16)
 app = Flask(__name__)
-app.config['SECRET_KEY'] = os.environ.get('APP_SECRET_KEY')
+app.config['SECRET_KEY'] = os.environ.get('APP_SECRET_KEY', secret_key)
 ckeditor = CKEditor(app)
 Bootstrap5(app)
 
@@ -22,7 +24,8 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get('DB_URI', 'sqlite:///posts.db')
+app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
+    'DB_URI', 'sqlite:///posts.db')
 db = SQLAlchemy()
 db.init_app(app)
 
@@ -96,13 +99,15 @@ def register():
     register_form = RegisterForm()
     if register_form.validate_on_submit():
         email = register_form.email.data
-        user = db.session.execute(db.select(User).where(User.email == email)).scalar()
+        user = db.session.execute(
+            db.select(User).where(User.email == email)).scalar()
 
         if user:
             flash('You\'ve already signed up with that email, log in instead!')
             return redirect(url_for('login'))
 
-        hashed_pass = generate_password_hash(register_form.password.data, method='pbkdf2:sha256', salt_length=8)
+        hashed_pass = generate_password_hash(
+            register_form.password.data, method='pbkdf2:sha256', salt_length=8)
         new_user = User(
             email=email,  # type: ignore
             password=hashed_pass,  # type: ignore
@@ -122,7 +127,8 @@ def login():
 
     if login_form.validate_on_submit():
         email = login_form.email.data
-        user = db.session.execute(db.select(User).where(User.email == email)).scalar()
+        user = db.session.execute(
+            db.select(User).where(User.email == email)).scalar()
         if not user:
             flash('That email does not exist, please try again.')
         elif not check_password_hash(user.password, login_form.password.data):
