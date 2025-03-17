@@ -15,9 +15,15 @@ COPY . .
 
 # Set environment variable for Flask secret key
 # ENV APP_SECRET_KEY=your_generated_secret_key_here
+ENV FLASK_APP=main.py
+ENV POSTGRES_USER=postgres
+ENV POSTGRES_PASSWORD=postgres
+ENV POSTGRES_DB=blog
+ENV POSTGRES_HOST=db
+ENV POSTGRES_PORT=5432
 
 # Expose the port the app runs on
 EXPOSE 5000
 
 # Define the command to run the application
-CMD ["python", "main.py"]
+CMD ["flask", "run", "--host=0.0.0.0"]
