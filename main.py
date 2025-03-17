@@ -24,8 +24,15 @@ login_manager = LoginManager()
 login_manager.init_app(app)
 
 # CONNECT TO DB
-app.config['SQLALCHEMY_DATABASE_URI'] = os.environ.get(
-    'DB_URI', 'sqlite:///posts.db')
+user = os.environ.get('POSTGRES_USER')
+password = os.environ.get('POSTGRES_PASSWORD')
+host = os.environ.get('POSTGRES_HOST')
+port = os.environ.get('POSTGRES_PORT')
+database = os.environ.get('POSTGRES_DB')
+DATABASE_URI = f"postgresql+psycopg2://{user}:{password}@{host}:{port}/{database}"
+
+app.config['SQLALCHEMY_DATABASE_URI'] = DATABASE_URI
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
 db = SQLAlchemy()
 db.init_app(app)
 
@@ -227,4 +234,4 @@ def contact():
 
 
 if __name__ == "__main__":
-    app.run(debug=False)
+    app.run(debug=True)
